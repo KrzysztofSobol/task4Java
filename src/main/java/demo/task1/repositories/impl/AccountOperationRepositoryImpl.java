@@ -12,6 +12,7 @@ import jakarta.persistence.criteria.Root;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
 public class AccountOperationRepositoryImpl extends GenericDaoImpl<AccountOperation, Long> implements AccountOperationRepository {
@@ -53,6 +54,27 @@ public class AccountOperationRepositoryImpl extends GenericDaoImpl<AccountOperat
             cq.orderBy(cb.desc(root.get("timestamp")));
 
             return em.createQuery(cq).getResultList();
+        }
+    }
+
+    @Override
+    public List<AccountOperation> findByDateRange(Long id, Date from, Date to) {
+        try(EntityManager em = getEntityManager()) {
+            return em.createNamedQuery("Operation.findByDateRange", AccountOperation.class)
+                    .setParameter("accountId", id)
+                    .setParameter("startDate", from)
+                    .setParameter("endDate", to)
+                    .getResultList();
+        }
+    }
+
+    @Override
+    public OperationType findByMostFrequentType(Long id) {
+        try(EntityManager em = getEntityManager()) {
+            return em.createNamedQuery("Operation.findByMostFrequentType", OperationType.class)
+                    .setParameter("accountId", id)
+                    .setMaxResults(1)
+                    .getSingleResult();
         }
     }
 }

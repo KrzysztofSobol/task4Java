@@ -1,6 +1,7 @@
 package demo.task1.models;
 
 import jakarta.persistence.*;
+import jdk.jfr.Name;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,6 +20,17 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "ACCOUNT_OPERATIONS")
 @Inheritance(strategy = InheritanceType.JOINED)
+
+@NamedQueries({
+    @NamedQuery(
+            name = "Operation.findByDateRange",
+            query = "SELECT ao FROM AccountOperation ao WHERE ao.account.id = :accountId AND ao.createdAt BETWEEN :startDate AND :endDate"
+    ),
+    @NamedQuery(
+            name = "Operation.findByMostFrequentType",
+            query = "SELECT ao.type FROM AccountOperation ao WHERE ao.account.id = :accountId GROUP BY ao.type ORDER BY COUNT(ao) DESC"
+    )
+})
 public class AccountOperation extends AbstractModel {
 
     @ManyToOne

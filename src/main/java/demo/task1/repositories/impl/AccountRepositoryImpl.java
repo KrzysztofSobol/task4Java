@@ -8,8 +8,10 @@ import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
+import org.eclipse.persistence.internal.libraries.asm.tree.TryCatchBlockNode;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
 
 public class AccountRepositoryImpl extends GenericDaoImpl<Account, Long> implements AccountRepository {
@@ -40,37 +42,60 @@ public class AccountRepositoryImpl extends GenericDaoImpl<Account, Long> impleme
 
     @Override
     public Optional<Account> findByNameAndAddress(String name, String address) {
-        EntityManager em = getEntityManager();
-        try{
-            CriteriaBuilder cb = em.getCriteriaBuilder();
-            CriteriaQuery<Account> cq = cb.createQuery(Account.class);
-            Root<Account> root = cq.from(Account.class); // kinda like FROM in SQL
-
-            Predicate namePredicate = cb.equal(root.get("name"), name);
-            Predicate addressPredicate = cb.equal(root.get("address"), address);
-
-            cq.where(cb.and(namePredicate, addressPredicate));
-
-            try{
-                Account account = em.createQuery(cq)
-                        .setMaxResults(1)
-                        .getResultList()
-                        .stream()
-                        .findFirst()
-                        .orElse(null);
-
-                if (account != null) {
-                    return Optional.of(account);
-                } else {
-                    return Optional.empty();
-                }
+        try (EntityManager em = getEntityManager()) {
+            try {
+                return Optional.of(
+                        em.createNamedQuery("Account.findByNameAndAddress", Account.class)
+                                .setParameter("name", name)
+                                .setParameter("address", address)
+                                .getSingleResult()
+                );
             } catch (NoResultException e) {
                 return Optional.empty();
             }
-        } finally {
-            if(em != null && em.isOpen()) {
-                em.close();
-            }
+        }
+    }
+
+
+    public List<Account> findByNameStartWith(String prefix){
+        try(EntityManager em = getEntityManager()){
+            return em.createNamedQuery("Account.findByNameStartWith", Account.class)
+                    .setParameter("prefix", prefix)
+                    .getResultList();
+        }
+    }
+
+    @Override
+    public List<Account> findByBalanceBetween(BigDecimal min, BigDecimal max) {
+        try(EntityManager em = getEntityManager()){
+            return em.createNamedQuery("Account.findByBalanceBetween", Account.class)
+                    .setParameter("min", min)
+                    .setParameter("max", max)
+                    .getResultList();
+        }
+    }
+
+    @Override
+    public List<Account> findByTheRichest() {
+        try(EntityManager em = getEntityManager()){
+            return em.createNamedQuery("Account.findByTheRichest", Account.class)
+                    .getResultList();
+        }
+    }
+
+    @Override
+    public List<Account> findByEmptyHistory() {
+        try(EntityManager em = getEntityManager()){
+            return em.createNamedQuery("Account.findByEmptyHistory", Account.class)
+                    .getResultList();
+        }
+    }
+
+    @Override
+    public List<Account> findByMostOperations() {
+        try(EntityManager em = getEntityManager()){
+            return em.createNamedQuery("Account.findByMostOperations", Account.class)
+                    .getResultList();
         }
     }
 }
