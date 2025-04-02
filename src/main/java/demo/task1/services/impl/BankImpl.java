@@ -1,12 +1,19 @@
 package demo.task1.services.impl;
 
 import demo.task1.models.Account;
+import demo.task1.models.AccountOperation;
 import demo.task1.models.OperationType;
 import demo.task1.repositories.AccountOperationRepository;
 import demo.task1.repositories.AccountRepository;
 import demo.task1.services.Bank;
 
 import java.math.BigDecimal;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 import java.util.logging.Logger;
 
@@ -24,6 +31,7 @@ public class BankImpl implements Bank {
                 operationRepository.getClass().getName());
     }
 
+    // task 3 methods
     @Override
     public Long createAccount(String name, String address) {
         logger.fine("Creating account for: " + name + " with address: " + address);
@@ -169,5 +177,43 @@ public class BankImpl implements Bank {
             logger.severe("Account with id: " + idSource + " or " + idDestination + " is invalid!");
             throw new AccountIdException();
         }
+    }
+
+    // task 4 methods
+        // Account realted
+    public List<Account> findByNameStartWith(String prefix){
+        return accountRepository.findByNameStartWith(prefix);
+    }
+
+    public List<Account> findByBalanceBetween(BigDecimal min, BigDecimal max){
+        return accountRepository.findByBalanceBetween(min, max);
+    }
+
+    public List<Account> findByTheRichest(){
+        return accountRepository.findByTheRichest();
+    }
+
+    public List<Account> findByEmptyHistory(){
+        return accountRepository.findByEmptyHistory();
+    }
+
+    public List<Account> findByMostOperations(){
+        return accountRepository.findByMostOperations();
+    }
+
+    // Operations related
+    public List<AccountOperation> findByDateRange(Long id, Date from, Date to){
+        LocalDateTime fromDateTime = Instant.ofEpochMilli(from.getTime())
+                .atZone(ZoneId.systemDefault())
+                .toLocalDateTime();
+        LocalDateTime toDateTime = Instant.ofEpochMilli(to.getTime())
+                .atZone(ZoneId.systemDefault())
+                .toLocalDateTime();
+
+        return operationRepository.findByDateRange(id, fromDateTime ,toDateTime);
+    }
+
+    public OperationType findByMostFrequentType(Long id){
+        return operationRepository.findByMostFrequentType(id);
     }
 }

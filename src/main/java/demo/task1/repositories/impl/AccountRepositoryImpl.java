@@ -60,7 +60,7 @@ public class AccountRepositoryImpl extends GenericDaoImpl<Account, Long> impleme
     public List<Account> findByNameStartWith(String prefix){
         try(EntityManager em = getEntityManager()){
             return em.createNamedQuery("Account.findByNameStartWith", Account.class)
-                    .setParameter("prefix", prefix)
+                    .setParameter("prefix", prefix + "%")
                     .getResultList();
         }
     }

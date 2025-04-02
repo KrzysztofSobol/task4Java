@@ -1,6 +1,12 @@
 package demo.task1.services;
 
+import demo.task1.models.Account;
+import demo.task1.models.AccountOperation;
+import demo.task1.models.OperationType;
+
 import java.math.BigDecimal;
+import java.util.Date;
+import java.util.List;
 
 public interface Bank {
     /**
@@ -61,6 +67,14 @@ public interface Bank {
      * wystarczajace do wykonania operacji
      */
     void transfer(Long idSource, Long idDestination, BigDecimal amount, String title);
+
+    List<Account> findByNameStartWith(String prefix);
+    List<Account> findByBalanceBetween(BigDecimal min, BigDecimal max);
+    List<Account> findByTheRichest();
+    List<Account> findByEmptyHistory();
+    List<Account> findByMostOperations();
+    List<AccountOperation> findByDateRange(Long id, Date from, Date to);
+    OperationType findByMostFrequentType(Long id);
 
     class InsufficientFundsException extends RuntimeException {
     };

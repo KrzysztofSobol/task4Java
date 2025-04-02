@@ -58,7 +58,7 @@ public class AccountOperationRepositoryImpl extends GenericDaoImpl<AccountOperat
     }
 
     @Override
-    public List<AccountOperation> findByDateRange(Long id, Date from, Date to) {
+    public List<AccountOperation> findByDateRange(Long id, LocalDateTime from, LocalDateTime to) {
         try(EntityManager em = getEntityManager()) {
             return em.createNamedQuery("Operation.findByDateRange", AccountOperation.class)
                     .setParameter("accountId", id)

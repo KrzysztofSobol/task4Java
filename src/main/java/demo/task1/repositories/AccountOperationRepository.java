@@ -5,6 +5,7 @@ import demo.task1.models.AccountOperation;
 import demo.task1.models.OperationType;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -16,6 +17,6 @@ public interface AccountOperationRepository extends GenericDao<AccountOperation,
                                              BigDecimal amount, OperationType type, String title);
 
     List<AccountOperation> findByAccount(Account account);
-    List<AccountOperation> findByDateRange(Long id, Date from, Date to);
+    List<AccountOperation> findByDateRange(Long id, LocalDateTime from, LocalDateTime to);
     OperationType findByMostFrequentType(Long id);
 }

@@ -1,6 +1,8 @@
 package demo.task1;
 
 import demo.task1.models.Account;
+import demo.task1.models.AccountOperation;
+import demo.task1.models.OperationType;
 import demo.task1.repositories.AccountOperationRepository;
 import demo.task1.repositories.AccountRepository;
 import demo.task1.repositories.impl.AccountOperationRepositoryImpl;
@@ -8,9 +10,14 @@ import demo.task1.repositories.impl.AccountRepositoryImpl;
 import demo.task1.services.Bank;
 import demo.task1.services.impl.BankImpl;
 
+import javax.sound.midi.SysexMessage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
 import java.util.logging.LogManager;
@@ -60,22 +67,43 @@ public class App {
 
             switch(choice){
                 case 1:
-                    findAccount();
-                    break;
-                case 2:
                     deposit();
                     break;
-                case 3:
+                case 2:
                     withdraw();
                     break;
-                case 4:
+                case 3:
                     checkBalance();
                     break;
-                case 5:
+                case 4:
                     transfer();
                     break;
-                case 6:
+                case 5:
                     createAccount();
+                    break;
+                case 6:
+                    findAccount();
+                    break;
+                case 7:
+                    findByNameStartWith();
+                    break;
+                case 8:
+                    findByBalanceBetween();
+                    break;
+                case 9:
+                    findByTheRichest();
+                    break;
+                case 10:
+                    findByEmptyHistory();
+                    break;
+                case 11:
+                    findByMostOperations();
+                    break;
+                case 12:
+                    findByDateRange();
+                    break;
+                case 13:
+                    findByMostFrequentType();
                     break;
                 case 0:
                     System.out.println("Thank you for using our bank. Goodbye!");
@@ -88,13 +116,26 @@ public class App {
 
     private static void displayMenu() {
         System.out.println("\n===== BANK MENU =====");
-        System.out.println("1. Find Account");
-        System.out.println("2. Deposit");
-        System.out.println("3. Withdraw");
-        System.out.println("4. Check Balance");
-        System.out.println("5. Transfer Money");
-        System.out.println("6. Create New Account");
+        System.out.println("1. Deposit");
+        System.out.println("2. Withdraw");
+        System.out.println("3. Check Balance");
+        System.out.println("4. Transfer Money");
+        System.out.println("5. Create New Account");
         System.out.println("0. Exit");
+
+        System.out.println("\n===== @NamedQuery Methods =====");
+        System.out.println("===== Find Account/s =====");
+        System.out.println("6. By name and address");
+        System.out.println("7. That start with (...)");
+        System.out.println("8. That have (...) range of money");
+        System.out.println("9. That are the most wealthy");
+        System.out.println("10. With empty history");
+        System.out.println("11. With the most operations");
+
+        System.out.println("\n===== Find Operations =====");
+        System.out.println("12. From (date) to (date)");
+        System.out.println("13. That are the most frequent");
+
         System.out.print("Enter your choice: ");
     }
 
@@ -200,6 +241,90 @@ public class App {
         System.out.println("New account created with ID: " + id);
     }
 
+    private static void findByNameStartWith(){
+        System.out.println("Enter the prefix: ");
+        String prefix = scanner.nextLine();
+
+        List<Account> list = bank.findByNameStartWith(prefix);
+        printAccounts(list);
+    }
+
+    private static void findByBalanceBetween(){
+        System.out.println("Enter the minimum balance: ");
+        BigDecimal min = scanner.nextBigDecimal();
+        scanner.nextLine();
+        System.out.println("Enter the maximum balance: ");
+        BigDecimal max = scanner.nextBigDecimal();
+        scanner.nextLine();
+
+        List<Account> list = bank.findByBalanceBetween(min, max);
+        printAccounts(list);
+    }
+
+    private static void findByTheRichest(){
+        List<Account> list = bank.findByTheRichest();
+        printAccounts(list);
+    }
+
+    private static void findByEmptyHistory(){
+        List<Account> list = bank.findByEmptyHistory();
+        printAccounts(list);
+    }
+
+    private static void findByMostOperations(){
+        List<Account> list = bank.findByMostOperations();
+        printAccounts(list);
+    }
+
+    private static void findByDateRange(){
+        System.out.println("Enter the id of the account: ");
+        Long sourceId = scanner.nextLong();
+        scanner.nextLine();
+
+        System.out.println("Enter start date (yyyy-MM-dd): ");
+        String fromDateStr = scanner.nextLine();
+
+        System.out.println("Enter end date (yyyy-MM-dd): ");
+        String toDateStr = scanner.nextLine();
+
+        try{
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            Date fromDate = sdf.parse(fromDateStr);
+            Date toDate = sdf.parse(toDateStr);
+
+            List<AccountOperation> list = bank.findByDateRange(sourceId, fromDate, toDate);
+            printOperations(list);
+        } catch (ParseException e) {
+            System.out.println("Invalid date format. Please use yyyy-MM-dd");
+        }
+    }
+
+    private static void findByMostFrequentType(){
+        System.out.println("Enter the id of the account: ");
+        Long sourceId = scanner.nextLong();
+        scanner.nextLine();
+
+        OperationType type = bank.findByMostFrequentType(sourceId);
+        System.out.println("Most frequent type found is: " + type);
+    }
+
+    // print methods
+    private static void printAccounts(List<Account> list){
+        for(Account a: list){
+            System.out.println("\n" + a.getId());
+            System.out.println(a.getName() + " " + a.getAddress());
+            System.out.println("   " + a.getBalance());
+        }
+    }
+
+    private static void printOperations(List<AccountOperation> list){
+        for(AccountOperation ao: list){
+            System.out.println("\n" + ao.getId() + " " + ao.getAccount().getName());
+            System.out.println(ao.getType());
+            System.out.println(ao.getAmount());
+            System.out.println(ao.getCreatedAt());
+        }
+    }
 
     public static double max(double a, double b) {
         return a>b ? a : b;
