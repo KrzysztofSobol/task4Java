@@ -19,32 +19,30 @@ import java.util.List;
 @Entity
 @Table(name = "ACCOUNTS")
 
-@NamedQueries({
-        @NamedQuery(
-                name = "Account.findByNameAndAddress",
-                query = "SELECT a FROM Account a WHERE a.name = :name AND a.address = :address"
-        ),
-        @NamedQuery(
-                name = "Account.findByNameStartWith",
-                query = "SELECT a FROM Account a WHERE a.name LIKE :prefix"
-        ),
-        @NamedQuery(
-                name = "Account.findByBalanceBetween",
-                query = "SELECT a FROM Account a WHERE a.balance BETWEEN :min AND :max"
-        ),
-        @NamedQuery(
-                name = "Account.findByTheRichest",
-                query = "SELECT a FROM Account a WHERE a.balance = (SELECT MAX(a2.balance) FROM Account a2)"
-        ),
-        @NamedQuery(
-                name = "Account.findByEmptyHistory",
-                query = "SELECT a FROM Account a WHERE a.operations IS EMPTY"
-        ),
-        @NamedQuery(
-                name = "Account.findByMostOperations",
-                query = "SELECT a FROM Account a WHERE SIZE(a.operations) = (SELECT MAX(SIZE(a2.operations)) FROM Account a2)"
-        )
-})
+@NamedQuery(
+        name = "Account.findByNameAndAddress",
+        query = "SELECT a FROM Account a WHERE a.name = :name AND a.address = :address"
+)
+@NamedQuery(
+        name = "Account.findByNameStartWith",
+        query = "SELECT a FROM Account a WHERE a.name LIKE :prefix"
+)
+@NamedQuery(
+        name = "Account.findByBalanceBetween",
+        query = "SELECT a FROM Account a WHERE a.balance BETWEEN :min AND :max"
+)
+@NamedQuery(
+        name = "Account.findByTheRichest",
+        query = "SELECT a FROM Account a WHERE a.balance = (SELECT MAX(a2.balance) FROM Account a2)"
+)
+@NamedQuery(
+        name = "Account.findByEmptyHistory",
+        query = "SELECT a FROM Account a WHERE a.operations IS EMPTY"
+)
+@NamedQuery(
+        name = "Account.findByMostOperations",
+        query = "SELECT a FROM Account a WHERE SIZE(a.operations) = (SELECT MAX(SIZE(a2.operations)) FROM Account a2)"
+)
 
 public class Account extends AbstractModel{
     private String name;

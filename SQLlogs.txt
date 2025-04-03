@@ -1,0 +1,45 @@
+[EL Fine]: sql: 2025-04-03 17:56:35.145--ServerSession(1076770748)--Connection(204805934)--Thread(Thread[#1,main,5,main])--SELECT ID, ADDRESS, BALANCE, created_at, NAME, updated_at FROM ACCOUNTS WHERE ((NAME = ?) AND (ADDRESS = ?))
+	bind => [Krzysztof, PB]
+Account found with ID: 1
+
+
+
+[EL Fine]: sql: 2025-04-03 17:58:17.698--ServerSession(1076770748)--Connection(204805934)--Thread(Thread[#1,main,5,main])--SELECT ID, ADDRESS, BALANCE, created_at, NAME, updated_at FROM ACCOUNTS WHERE NAME LIKE ?
+	bind => [Krzy%]
+
+
+
+[EL Fine]: sql: 2025-04-03 18:00:10.062--ServerSession(1076770748)--Connection(204805934)--Thread(Thread[#1,main,5,main])--SELECT ID, ADDRESS, BALANCE, created_at, NAME, updated_at FROM ACCOUNTS WHERE (BALANCE BETWEEN ? AND ?)
+	bind => [251, 252]
+
+
+
+[EL Fine]: sql: 2025-04-03 18:00:30.778--ServerSession(1076770748)--Connection(204805934)--Thread(Thread[#1,main,5,main])--SELECT ID, ADDRESS, BALANCE, created_at, NAME, updated_at FROM ACCOUNTS WHERE (BALANCE BETWEEN ? AND ?)
+	bind => [10, 251]
+
+
+
+[EL Fine]: sql: 2025-04-03 18:04:03.31--ServerSession(1076770748)--Connection(204805934)--Thread(Thread[#1,main,5,main])--SELECT t0.ID, t0.ADDRESS, t0.BALANCE, t0.created_at, t0.NAME, t0.updated_at FROM ACCOUNTS t0 WHERE (t0.BALANCE = (SELECT MAX(t1.BALANCE) FROM ACCOUNTS t1))
+
+
+
+[EL Fine]: sql: 2025-04-03 18:04:46.043--ServerSession(1076770748)--Connection(204805934)--Thread(Thread[#1,main,5,main])--SELECT t0.ID, t0.ADDRESS, t0.BALANCE, t0.created_at, t0.NAME, t0.updated_at FROM ACCOUNTS t0 WHERE ((SELECT COUNT(t1.ID) FROM ACCOUNT_OPERATIONS t1 WHERE (t1.account_id = t0.ID)) = ?)
+	bind => [0]
+
+
+[EL Fine]: sql: 2025-04-03 18:12:15.73--ServerSession(1076770748)--Connection(204805934)--Thread(Thread[#1,main,5,main])--SELECT t0.ID, t0.ADDRESS, t0.BALANCE, t0.created_at, t0.NAME, t0.updated_at FROM ACCOUNTS t0 WHERE ((SELECT COUNT(t1.ID) FROM ACCOUNT_OPERATIONS t1 WHERE (t1.account_id = t0.ID)) = (SELECT MAX((SELECT COUNT(t3.ID) FROM ACCOUNT_OPERATIONS t3 WHERE (t3.account_id = t2.ID))) FROM ACCOUNTS t2))
+
+
+
+TUTAJ 2 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+[EL Fine]: sql: 2025-04-03 18:12:56.13--ServerSession(1076770748)--Connection(204805934)--Thread(Thread[#1,main,5,main])--SELECT DISTINCT DTYPE FROM ACCOUNT_OPERATIONS WHERE ((account_id = ?) AND (created_at BETWEEN ? AND ?))
+	bind => [1, 2025-01-01T00:00, 2025-12-01T00:00]
+[EL Fine]: sql: 2025-04-03 18:12:56.144--ServerSession(1076770748)--Connection(204805934)--Thread(Thread[#1,main,5,main])--SELECT ID, DTYPE, AMOUNT, created_at, TYPE, updated_at, account_id FROM ACCOUNT_OPERATIONS WHERE (((account_id = ?) AND (created_at BETWEEN ? AND ?)) AND (DTYPE = ?))
+	bind => [1, 2025-01-01T00:00, 2025-12-01T00:00, AccountOperation]
+
+
+
+[EL Fine]: sql: 2025-04-03 18:14:17.688--ServerSession(1076770748)--Connection(204805934)--Thread(Thread[#1,main,5,main])--SELECT t0.TYPE AS a1 FROM ACCOUNT_OPERATIONS t0 LEFT OUTER JOIN TRANSFER_OPERATIONS t1 ON (t1.ID = t0.ID) WHERE (t0.account_id = ?) GROUP BY t0.TYPE ORDER BY COUNT(t0.ID) DESC LIMIT ? OFFSET ?
+	bind => [1, 1, 0]
+Most frequent type found is: DEPOSIT
+
